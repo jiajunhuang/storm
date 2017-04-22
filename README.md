@@ -8,3 +8,5 @@ Demo:
 ```bash
 $ PYTHONPATH=. python3 demo/main.py
 ```
+
+[Benchmark](./benchmark.md)
