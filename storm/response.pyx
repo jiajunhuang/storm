@@ -23,7 +23,6 @@ class HTTPResponse:
             str headers="",
             str body="",
     ):
-
         self.status = status
         self.content_type = content_type
         self.headers = headers
@@ -52,7 +51,10 @@ class HTTPResponse:
 
 
 async def start_response(app, transport, request):
-    cdef str http_method
+    cdef:
+        str http_method
+        list params
+        object handler_cls
 
     logging.debug("start to response")
     try:
