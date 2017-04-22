@@ -1,14 +1,10 @@
 import logging
 import asyncio
 
-import uvloop
 import httptools
 
 from storm.request import Request
 from storm.response import start_response
-
-
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 class HTTPProtocol(asyncio.Protocol):
@@ -24,29 +20,29 @@ class HTTPProtocol(asyncio.Protocol):
         logging.debug("connection made with transport {}".format(transport))
         self._transport = transport
 
-    def data_received(self, data):
+    def data_received(self, bytes data):
         logging.debug("received data {}".format(data))
         try:
             self._parser.feed_data(data)
         except httptools.HttpParserError:
             logging.exception("Bad Request")
 
-    def on_url(self, url):
+    def on_url(self, bytes url):
         logging.debug("on url {}".format(url))
         self._request.url = url.decode()
 
-    def on_header(self, name, value):
+    def on_header(self, bytes name, bytes value):
         logging.debug("on header {}: {}".format(name, value))
-        self._request.headers[name] = value
+        self._request.headers[name.decode()] = value.decode()
 
     def on_headers_complete(self):
         logging.debug("headers complete")
         self._request.http_version = self._parser.get_http_version()
         self._request.http_method = self._parser.get_method().decode()
 
-    def on_body(self, body):
+    def on_body(self, bytes body):
         logging.debug("on body {}".format(body))
-        self._request.body.append(body)
+        self._request.body.append(body.decode())
 
     def on_message_complete(self):
         logging.debug("message complete")

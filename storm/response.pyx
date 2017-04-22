@@ -18,11 +18,12 @@ HTTP_STATUS_CODE_MAP = {
 class HTTPResponse:
     def __init__(
             self,
-            status=200,
-            content_type="text/json",
-            headers="",
-            body="",
+            int status=200,
+            str content_type="text/json",
+            str headers="",
+            str body="",
     ):
+
         self.status = status
         self.content_type = content_type
         self.headers = headers
@@ -51,6 +52,8 @@ class HTTPResponse:
 
 
 async def start_response(app, transport, request):
+    cdef str http_method
+
     logging.debug("start to response")
     try:
         handler_cls, params = app.get_handler_cls(request.url)

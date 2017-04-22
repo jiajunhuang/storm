@@ -3,6 +3,12 @@ import json
 
 class RequestHandler:
     def __init__(self, app, request):
+        cdef:
+            int status
+            str content_type
+            list headers
+            list body
+
         self._app = app
         self.request = request
         self.status = 200

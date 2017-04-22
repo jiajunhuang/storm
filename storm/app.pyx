@@ -3,6 +3,8 @@ import logging
 import asyncio
 import re
 
+import uvloop
+
 from storm.server import HTTPProtocol
 from storm.exceptions import NotFoundError
 
@@ -20,6 +22,7 @@ class Application:
             log_level = logging.DEBUG
 
         logging.basicConfig(level=log_level)
+        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
         self._loop = asyncio.get_event_loop()
 
         self.ignore_slash = ignore_slash
@@ -41,7 +44,7 @@ class Application:
                 (regex, handler_cls)  # a tuple
             )
 
-    def run(self, host="127.0.0.1", port=8080):
+    def run(self, str host="127.0.0.1", int port=8080):
         try:
             self._loop.run_until_complete(
                 self._loop.create_server(
@@ -55,7 +58,7 @@ class Application:
         except KeyboardInterrupt:
             self._loop.stop()
 
-    def get_handler_cls(self, url):
+    def get_handler_cls(self, str url):
         logging.debug("request url is {}".format(url))
 
         for regex, handler in self._handler_classes:
